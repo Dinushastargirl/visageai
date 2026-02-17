@@ -1,20 +1,31 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
+# VisageAI - Vercel Deployment Guide
 
-This contains everything you need to run your app locally.
+Follow these steps to deploy your AI Face Shape Analyzer to Vercel.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1WAcbG2hHtYzL5q6voZc4GS6vNDQoN4XG
+## 1. Prepare your Repository
+Ensure all files, including the new `package.json`, `vite.config.ts`, and `vercel.json`, are pushed to your GitHub/GitLab/Bitbucket repository.
 
-## Run Locally
+## 2. Deploy to Vercel
+1. Log in to [Vercel](https://vercel.com).
+2. Click **"Add New"** > **"Project"**.
+3. Import your repository.
+4. Vercel should automatically detect the **Vite** framework. If not, select it from the dropdown.
 
-**Prerequisites:**  Node.js
+## 3. Configure Environment Variables (Crucial)
+Before clicking "Deploy", you must add your Gemini API Key:
+1. In the **Environment Variables** section, add a new entry:
+   - **Key**: `API_KEY`
+   - **Value**: `YOUR_ACTUAL_GOOGLE_GEMINI_API_KEY`
+2. Click **"Add"**.
 
+## 4. Finalize
+1. Click **"Deploy"**.
+2. Once the build finishes, your app will be live on an `https` URL.
+3. **Note:** Browsers require `https` to access the camera, which Vercel provides by default.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Local Development
+To run this project locally:
+1. `npm install`
+2. `export API_KEY=your_key_here` (or create a `.env` file)
+3. `npm run dev`
