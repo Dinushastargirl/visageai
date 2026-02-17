@@ -13,6 +13,10 @@
         background-color: #f8fafc;
       }
     </style>
+    <!-- Shim for process.env to prevent ReferenceErrors in browser-only environments -->
+    <script>
+      window.process = window.process || { env: {} };
+    </script>
   <script type="importmap">
 {
   "imports": {

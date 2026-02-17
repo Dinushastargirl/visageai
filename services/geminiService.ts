@@ -2,8 +2,22 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, FaceShape } from "../types";
 
+/**
+ * Helper to safely get the API key from the environment.
+ */
+const getApiKey = () => {
+  const key = typeof process !== 'undefined' ? process.env.API_KEY : undefined;
+  if (!key) {
+    console.error("API_KEY is missing from process.env");
+  }
+  return key || "";
+};
+
 export async function analyzeFaceShape(base64Image: string): Promise<AnalysisResult> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getApiKey();
+  if (!apiKey) throw new Error("API configuration missing. Please check your environment variables.");
+
+  const ai = new GoogleGenAI({ apiKey });
   
   const prompt = `
     Analyze this human face image and determine its face shape (Oval, Round, Square, Heart, Diamond, or Oblong).
@@ -60,16 +74,20 @@ export async function analyzeFaceShape(base64Image: string): Promise<AnalysisRes
       }
     });
 
+    if (!response.text) throw new Error("Empty response from AI model.");
     const result = JSON.parse(response.text);
     return result as AnalysisResult;
   } catch (error) {
     console.error("Gemini Analysis Error:", error);
-    throw new Error("Failed to analyze image. Please ensure the face is clear and well-lit.");
+    throw new Error("Failed to analyze image. Ensure the face is clear and the API key is correctly configured in Vercel.");
   }
 }
 
 export async function generateInspirationImage(shape: FaceShape, tips: { hair: string; glasses: string }): Promise<string> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const apiKey = getApiKey();
+  if (!apiKey) return ""; // Fail silently for inspiration image if key missing
+
+  const ai = new GoogleGenAI({ apiKey });
   
   const prompt = `
     Create a professional, high-fashion aesthetic portrait of a person with a perfectly ${shape} face shape.
@@ -94,14 +112,15 @@ export async function generateInspirationImage(shape: FaceShape, tips: { hair: s
     });
 
     let imageUrl = "";
-    for (const part of response.candidates[0].content.parts) {
+    const parts = response.candidates?.[0]?.content?.parts || [];
+    for (const part of parts) {
       if (part.inlineData) {
         imageUrl = `data:image/png;base64,${part.inlineData.data}`;
         break;
       }
     }
     
-    if (!imageUrl) throw new Error("No image data returned");
+    if (!imageUrl) throw new Error("No image data returned from model.");
     return imageUrl;
   } catch (error) {
     console.error("Image Generation Error:", error);
