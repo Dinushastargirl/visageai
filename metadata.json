@@ -1,0 +1,7 @@
+{
+  "name": "VisageAI - Face Shape Analyzer",
+  "description": "An AI-powered application that analyzes facial structures from photos to determine face shapes and provide personalized grooming and style tips.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
